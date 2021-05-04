@@ -1,0 +1,119 @@
+<?php
+$themeBase = Yii::app()->theme->baseUrl;
+
+$dateJs  = $themeBase . "/assets/bootstrap/datepicker/js/bootstrap-datepicker.min.js";
+$dateCss = $themeBase . "/assets/bootstrap/datepicker/css/bootstrap-datepicker3.min.css";
+?>
+    <!-- <h4 class="page-header">Data LegalitasPerusahaan</h4> -->
+    <link rel="stylesheet" type="text/css" href="<?=$dateCss?>" />
+    <script type="text/javascript" src="<?=$dateJs?>"></script>
+
+<?php
+
+$select_lahan = MasterJenisLahan::model()->findAll();
+$list_lahan = CHtml::listData($select_lahan, 'id', 'jenis_lahan');
+
+$select_prodlahan = MasterJenisProduksiLahan::model()->findAll();
+$list_prodlahan = CHtml::listData($select_prodlahan, 'id', 'jenis_produksi');
+
+$select_jenistanaman = MasterJenisTanaman::model()->findAll();
+$list_tanaman = CHtml::listData($select_jenistanaman, 'id', 'nama_tanaman');
+
+$select_sektor = BlokSektor::model()->findAll(array(
+    'condition' => 'id_rku = '.$rku->id_rku . " ORDER BY id ASC"
+));
+$list_sektor = CHtml::listData($select_sektor, 'id', function($data) {
+    $gabung = $data->idSektor->nama_sektor . " | ".
+              $data->idBlok->nama_blok;
+    return $gabung;
+});
+
+$form=$this->beginWidget('booster.widgets.TbActiveForm',array(
+    'id'=> 'rktTanamNotRelated-form',
+        'type'=>'horizontal',
+        'enableClientValidation' => true,
+        'htmlOptions' => array(
+			'enctype' => 'multipart/form-data',
+		),
+        'clientOptions' => array(
+            'validateOnSubmit' => true,
+        ),
+    'enableAjaxValidation'=>false,
+)); ?>
+
+<p class="help-block">Kolom dengan tanda <span class="required">*</span> harus diisi.</p>
+
+<?php echo $form->errorSummary($model); ?>
+
+    <?php echo $form->numberFieldGroup($model,'daur',array('widgetOptions'=>array('htmlOptions'=>array('class'=>'span5','maxlength'=>255)))); ?>
+    <?php echo $form->select2Group($model, 'id_jenis_lahan', array('groupOptions' => array('id' => "jenis_lahan"), 'widgetOptions' => array('options' => array('allowClear' => true), 'data' => $list_lahan, 'htmlOptions' => array('class' => 'form-control ', 'placeholder' => Yii::t('app', 'Pilih Lahan'))))); ?>
+    <?php echo $form->select2Group($model, 'id_produksi_lahan', array('groupOptions' => array('id' => "jenis_produksi"), 'widgetOptions' => array('options' => array('allowClear' => true), 'data' => $list_prodlahan, 'htmlOptions' => array('class' => 'form-control ', 'placeholder' => Yii::t('app', 'Pilih Produksi Lahan'))))); ?>
+    <?php echo $form->select2Group($model, 'id_jenis_tanaman', array('groupOptions' => array('id' => "nama_tanaman"), 'widgetOptions' => array('options' => array('allowClear' => true), 'data' => $list_tanaman, 'htmlOptions' => array('class' => 'form-control ', 'placeholder' => Yii::t('app', 'Pilih Jenis Tanaman'))))); ?>
+    <?php echo $form->select2Group($model, 'id_blok', array('groupOptions' => array('id' => "sektor"), 'widgetOptions' => array('options' => array('allowClear' => true), 'data' => $list_sektor, 'htmlOptions' => array('class' => 'form-control ', 'placeholder' => Yii::t('app', 'Pilih Blok Sektor'))))); ?>
+    <?php echo $form->numberFieldGroup($model,'jumlah',array('widgetOptions'=>array('htmlOptions'=>array('class'=>'span5','maxlength'=>255)))); ?>
+
+    <button type="button" name="button" class="btn btn-primary pull-right" onclick="simpanTanamNotRelated()">Simpan</button>
+
+<?php $this->endWidget(); ?>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        // $(".tangal").datepicker({'autoclose':true,'format':'yyyy-mm-dd','language':'id'});
+        // $(".control-label").attr('class','col-sm-3 control-label required');
+
+        $("#rktTanamNotRelated-form .control-label").each(function() {
+            var t = this;
+            $(t).attr('class','col-sm-3 control-label required');
+            var hml = $(t).html();
+            if(hml.indexOf("span") >= 0){
+                console.log('<span>' + " found");
+            } else {
+                $(t).append(' <span class="required">*</span>');
+            }
+        });
+    });
+
+    function simpanTanamNotRelated()
+    {
+
+        // if($("#RktHasilHutanNonkayu_id_hasil_hutan_nonkayu").val() == "") {
+        //     swal("Informasi", "Harap Pilih Hasil Hutan Non Kayu", "warning");
+        //     return false;
+        // }
+        //
+        // if($("#RktHasilHutanNonkayu_id_satuan_volume_nonkayu").val() == "") {
+        //     swal("Informasi", "Harap Pilih Satuan", "warning");
+        //     return false;
+        // }
+        //
+        // if($("#RktHasilHutanNonkayu_jumlah").val() == "") {
+        //     swal("Informasi", "Harap isi Realisasi", "warning");
+        //     return false;
+        // }
+
+        var form = new FormData($("#rktTanamNotRelated-form")[0]);
+        $.ajax({
+            type: "POST",
+            data: form,
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            url: "<?=Yii::app()->createUrl("/perusahaan/rktBibit/formRKTnotRelated")?>?id_rkt=<?=$rkt->id?>",
+            success: function(result) {
+                swal(result.header, result.message, result.status).then((ok) => {
+                    if(result.status == "success") {
+                        $.fn.yiiGridView.update("rktBibit-tanam-grid");
+                        $("#modal").modal("hide");
+
+                        // if(result.buton_hide) {
+                        //     $("#buton_new").hide();
+                        // }
+                    }
+                });
+            },
+          error: function(xhr, ajaxOptions, thrownError) {
+              swal("Error submiting!", xhr.responseText, "error");
+          }
+      });
+    }
+</script>

@@ -1,0 +1,119 @@
+body {
+    font-size: 9pt;
+}
+@page { 
+    /*size: auto;*/
+    margin: 90px 60px 100px;
+    footer: html_myFooter1;
+}
+.pagebreak {
+    page-break-before: always;
+}
+#header {
+    margin-bottom: 10px;
+    border-bottom: 3px double #000;
+}
+#header h4, #header h5 {
+    font-weight: bold;
+}
+#header table td {
+    border: none;
+}
+#body {
+    float: left;
+    width: 100%;
+}
+.footer {
+    font-weight: bold;
+}
+#data {margin-bottom: 15px;}
+h4 {
+    font-size:12pt;
+}
+h5 {
+    font-size:11pt;
+    margin: 0;
+}
+h6 {
+    font-size:10pt;
+    margin: 0;
+}
+#iup {
+    margin-bottom: 15px;
+}
+.grid-view {
+    padding: 0;
+}
+.page-header {
+    border-bottom: 1px solid #d2d3d5;
+    margin: 20px 0 10px;
+}
+.sub-item {
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+.page-header h4, .sub-item h5, .sub-item h6 {
+    font-weight: bold;
+    margin: 5px 0 !important;
+}
+.table td, .table th {
+    padding:3px;
+}
+table.nipz td, table.nipz th {
+    padding: 3px;
+}
+table.konten td, table.konten th {
+    border: 1px solid #d2d3d5;
+    padding: 3px;
+}
+table.konten td {
+    /*padding-left: 15px;*/
+    background-color: transparent;
+}
+table.konten th {
+    text-align: left;
+    background-color: transparent;
+}
+table.konten th.judul-tabel { text-align: center;}
+#body-center {
+    text-align: center;
+    /*font-weight: bold;*/
+    margin-bottom: 20px;
+}
+#body-center h4 {
+    font-weight: bold;
+}
+#body-center h5 {
+    font-weight: bold;
+}
+#body-center h4, #body-center h5 {
+    padding: 0;
+    margin: 0 0 3px 0;
+}
+#tabel-kiri {
+    width: 47%;
+    float: left;
+}
+#tabel-kanan {
+    width: 47%;
+    float: right;
+}
+#tabel-sep {
+    width:1%;
+    float:left;
+}
+#tabel-kiri .konten th {
+    font-size: 9pt;
+}
+#tabel-kiri .konten td {
+    font-size: 9pt;
+}
+#tabel-kanan .konten th {
+    font-size: 9pt;
+}
+#tabel-kanan .konten td {
+    font-size: 9pt;
+}
+.img-thumbnail {
+    width: 145px !important;
+}
