@@ -8,6 +8,10 @@ use app\models\SuratKeluarSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers;
+
+use linslin\yii2\curl;
+
 
 /**
  * SuratKeluarController implements the CRUD actions for SuratKeluar model.
@@ -67,6 +71,47 @@ class SuratKeluarController extends Controller
         $model = new SuratKeluar();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $postData = Yii::$app->request->post();
+            $nomorAgenda = $postData['SuratKeluar']['no_agenda'];
+            $tanggalSuratKeluar = $postData['SuratKeluar']['tanggal_surat_keluar'];
+          
+
+            $connection = yii::$app->db;
+            $command = $connection->createCommand('SELECT * FROM surat_masuk WHERE no_agenda =' ."$nomorAgenda");
+            $field = $command->queryAll();                   
+            
+            $nomorSurat = $field[0]['no_surat'];
+            $tanggalSuratMasuk = $field[0]['tanggal_surat'];
+            $idStaff = $field[0]['id_staf'];
+           
+
+            $keluar = date_create($tanggalSuratKeluar);
+            $masuk  = date_create($tanggalSuratMasuk);
+            $diff   = date_diff($keluar,$masuk);
+            $lamaWaktu = $diff->days;
+            
+           
+            $dataPostAPI = 'http://3.0.88.176:5000/calculate?hari='."$lamaWaktu".'&'.'nip='."$idStaff";
+        
+            $curl = new curl\Curl();
+            $response = $curl->setOption(
+                CURLOPT_POSTFIELDS, 
+                http_build_query(array()
+            ))
+            ->post($dataPostAPI);
+           
+            $decodeResponAPI = json_decode($response, true);
+            
+            $stafProcess = $decodeResponAPI['result']['hari'];
+            $nip   = $decodeResponAPI['result']['nip'];
+            $predict = $decodeResponAPI['result']['predict'];
+          
+            $queryUpdate    = "UPDATE staf_pengolah SET kinerja=".$predict.", lama_proses=".$lamaWaktu. " WHERE id_staf=".$idStaff;
+
+          
+            Yii::$app->db->createCommand($queryUpdate)
+            ->execute();
+            
             return $this->redirect(['view', 'id' => $model->no_surat_keluar]);
         }
 
