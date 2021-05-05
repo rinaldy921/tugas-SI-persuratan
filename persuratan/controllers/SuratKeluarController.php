@@ -91,7 +91,7 @@ class SuratKeluarController extends Controller
             $lamaWaktu = $diff->days;
             
            
-            $dataPostAPI = 'http://3.0.88.176:5000/calculate?hari='."$lamaWaktu".'&'.'nip='."$idStaff";
+            $dataPostAPI = 'http://127.0.0.1:5000/calculate?hari='."$lamaWaktu".'&'.'nip='."$idStaff";
         
             $curl = new curl\Curl();
             $response = $curl->setOption(

@@ -16,11 +16,11 @@ def calculate():
         return jsonify({'code': 404, 'msg': 'NIP cannot blank.'})
     if hari is None:
         return jsonify({'code': 404, 'msg': 'Lama Proses cannot blank.'})
-    df = pd.read_csv(r"D:\OneDrive - Institut Teknologi Bandung\Semester 2\6. Sistem Intelijen\Tugas Akhir\Dataset-training.csv", header=None)
+    df = pd.read_csv(r"C:\xampp-7.3\htdocs\tugas-SI-persuratan\machine-learning\Dataset.csv", header=None)
     df.columns = ['NIP', 'Lama-Proses', 'Kategori']
     Y = df['Kategori']
     X = df[['Lama-Proses']]
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3)
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
     clf = neighbors.KNeighborsClassifier()
     clf.fit(X_train, Y_train)
     accuary = clf.score(X_test, Y_test)
@@ -29,9 +29,9 @@ def calculate():
     predict = clf.predict(predict)
   
     return jsonify({ 'result': {
-        'NIP': nip,
-        'Lama Proses': hari,
-        'Prediksi Nilai Kinerja': int(predict[0])
+        'nip': nip,
+        'hari': hari,
+        'predict': int(predict[0])
     }})
 
 

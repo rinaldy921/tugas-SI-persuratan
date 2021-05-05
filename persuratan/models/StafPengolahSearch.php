@@ -46,6 +46,7 @@ class StafPengolahSearch extends StafPengolah
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'=> ['defaultOrder' => ['lama_proses' => SORT_ASC]],
         ]);
 
         $this->load($params);
